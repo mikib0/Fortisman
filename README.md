@@ -37,4 +37,4 @@ https://user-images.githubusercontent.com/54102880/215077600-676fa616-da46-45f6-
 
 ### Credits
 - Creator [@mi_ki_bo](https://twitter.com/mi_ki_bo) on Twitter
-- <small>Splash screen and logo photo by <a href="https://unsplash.com/@benjaminsweet?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Ben Sweet</a> on <a href="https://unsplash.com/photos/2LowviVHZ-E?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></small>
+- <sub><sup>Logo photo by <a href="https://unsplash.com/@benjaminsweet?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Ben Sweet</a> on <a href="https://unsplash.com/photos/2LowviVHZ-E?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></sup></sub>
