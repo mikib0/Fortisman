@@ -1,6 +1,5 @@
-import dummy from './dummy'
-import quotes from './quotes'
-
-const DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ss';
-
-export { dummy, quotes, DATE_FORMAT }
+export { default as quotes } from './quotes'
+export { default as defaultThemeColors } from './defaultThemeColors';
+export { default as darkThemeColors } from './darkThemeColors'
+export { default as ranks } from './ranks'
+export { default as DATE_FORMAT } from './DATE_FORMAT'

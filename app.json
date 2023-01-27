@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "fortisman",
+    "name": "Fortisman",
     "slug": "fortisman",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000000"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -23,11 +23,17 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+        "backgroundColor": "#00A1A1"
+      },
+      "package": "com.mikibo.fortisman"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2525f9fb-4f37-48ee-a2ee-fe4cbc3f6568"
+      }
     }
   }
 }

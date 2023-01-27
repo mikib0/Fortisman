@@ -1,73 +1,78 @@
 import React, { useEffect, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
-import { View, Text, StyleSheet, TextInput } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import moment from 'moment';
 
-import { AppBar, Timestamp, Navigation, FAButton } from '../components';
-import { historyActions } from '../redux/history';
+import { TopAppbar, Timestamp, FAB } from '../components';
 import { DATE_FORMAT } from '../constants';
+import { Text, TextInput, useTheme } from 'react-native-paper';
 
 const Reason = ({ navigation }) => {
   const { params } = useRoute();
-  const { relapse, mode, onSave } = params;
-  
+  const { relapse, onSave } = params;
+  const theme = useTheme();
+
   const [startDate, setStartDate] = useState(relapse.startDate);
   const [endDate, setEndDate] = useState(relapse.endDate);
+  const [text, setText] = useState(relapse.text);
+  const [title, setTitle] = useState(relapse.title);
 
-  const [text, setText] = useState(relapse ? relapse.text : '');
-  const [title, setTitle] = useState(relapse ? relapse.title : '');
-
-  const dispatch = useDispatch();
-
-  const { registerRelapse, updateRelapse } = historyActions;
-
-  // TODO: memoize
   const saveReason = () => {
-    const data = { title, text, startDate, endDate };
-    if (mode == 'new' || mode == 'streak_reset')
-      dispatch(registerRelapse(data));
-    else if (mode == 'edit')
-      dispatch(updateRelapse({ id: relapse.id, ...data }));
+    if(title.length == 0 || text.length == 0) return; // TODO: toast a message instead of just returning
+    const data = { startDate, endDate, title, text };
 
     navigation.goBack();
-    onSave && onSave();
+    onSave(data);
   };
 
   return (
-    <View style={styles.container}>
-      <AppBar title='What happened?' />
-      <View style={{ flex: 1 }}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <TopAppbar title='What happened?' />
+      <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
         <View style={styles.date}>
           <Timestamp
             date={startDate}
             onChange={(date) => {
-              setStartDate(moment(date).format(DATE_FORMAT))
-              }}
+              setStartDate(moment(date).format(DATE_FORMAT));
+            }}
           />
-          <Text>{'—'}</Text>
-          <Timestamp date={endDate} onChange={(date) => {
-              setEndDate(moment(date).format(DATE_FORMAT))
-              }} />
+          <Text style={{ marginLeft: -4, marginRight: 4 }}>{'—'}</Text>
+          <Timestamp
+            date={endDate}
+            onChange={(date) => {
+              setEndDate(moment(date).format(DATE_FORMAT));
+            }}
+          />
         </View>
         <TextInput
-          style={styles.titleInput}
-          placeholder='it was a stressfull day...'
+          style={{
+            backgroundColor: theme.colors.surface,
+            color: theme.colors.onSurface,
+            fontWeight: '500',
+          }}
+          placeholder='Title'
           onChangeText={setTitle}
           value={title}
         />
         <TextInput
-          style={styles.reasonInput}
-          placeholder='why the hell did you?!'
-          placeholderTextColor='#fff'
+          style={[
+            styles.reasonInput,
+            {
+              backgroundColor: theme.colors.surface,
+              color: theme.colors.onSurface,
+            },
+          ]}
+          placeholder='Write more here...'
+          textAlignVertical='top'
           multiline={true}
           onChangeText={setText}
           value={text}
           keyboardType='text'
         />
       </View>
-      <FAButton type='save' onPress={saveReason} />
-      <Navigation />
+      <FAB icon='content-save-outline' onPress={saveReason} />
     </View>
   );
 };
@@ -79,14 +84,10 @@ const styles = StyleSheet.create({
   date: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
   reasonInput: {
-    backgroundColor: 'blue',
     flex: 1,
-  },
-  titleInput: {
-    fontWeight: '800',
+    paddingVertical: 16,
   },
 });
 

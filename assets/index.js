@@ -1,25 +1,20 @@
-import dark_mode from './dark_mode.png';
-import arrow_back from './arrow_back.png';
-import circle from './circle.png';
-import line from './line.png';
-import expand_more from './expand_more.png';
-import share from './share.png';
-import bookmark from './bookmark.png';
-import resetIcon from './resetIcon.png';
-import write from './write.png';
-import save from './save.png';
-import bookmark_fill from './bookmark_fill.png';
+const resetIcon = (color) => (
+  `<svg
+    width='57'
+    height='57'
+    viewBox='0 0 57 57'
+    fill='none'
+    xmlns='http://www.w3.org/2000/svg'>
+    <path
+      d='M9.5 9.5V21.375H10.8822M47.3527 26.125C46.8275 21.9518 44.9325 18.0708 41.9648 15.0902C38.997 12.1096 35.1242 10.1979 30.9533 9.6547C26.7824 9.11148 22.5491 9.96743 18.9169 12.0884C15.2847 14.2094 12.4589 17.4756 10.8822 21.375M10.8822 21.375H21.375M47.5 47.5V35.625H46.1201M46.1201 35.625C44.5412 39.5221 41.7146 42.7857 38.0827 44.9048C34.4509 47.0239 30.2189 47.8788 26.0492 47.3358C21.8796 46.7928 18.0077 44.8824 15.0398 41.9038C12.0718 38.9252 10.1753 35.0466 9.64725 30.875M46.1201 35.625H35.625'
+      stroke='${color}'
+      stroke-width='2'
+      stroke-linecap='round'
+      stroke-linejoin='round'
+    />
+  </svg>`
+);
 
 export {
-  dark_mode,
-  arrow_back,
-  circle,
-  line,
-  expand_more,
-  share,
-  bookmark,
   resetIcon,
-  write,
-  save,
-  bookmark_fill,
 };

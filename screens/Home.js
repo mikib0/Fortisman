@@ -1,84 +1,152 @@
-import moment from 'moment';
+import { useTheme } from 'react-native-paper'
 import { useEffect, useState } from 'react';
-import { View, Text, Pressable, Image, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-
 import { resetIcon } from '../assets';
-import { Navigation, AppBar, ProgressCount, DTPicker
- } from '../components';
-import { currentStreakActions } from '../redux/currentStreak';
-import { DATE_FORMAT } from '../constants';
+import { SvgXml } from 'react-native-svg';
+
+import {
+  FAB,
+  TopAppbar,
+  ProgressCount,
+  DTPicker,
+  DetoxesList,
+  FortisDialog,
+} from '../components';
+import {
+  setSelectedDetox,
+  createDetox,
+  newRelapse,
+  deleteDetox,
+  setCurrentStreakStartDate,
+} from '../redux/actions';
+import { formattedDate } from '../utils';
 
 const Home = ({ navigation: { navigate } }) => {
   const dispatch = useDispatch();
-  let currentStreak = useSelector((state) => state.currentStreak);
-  if (!currentStreak) {
-    currentStreak = moment().format(DATE_FORMAT);
-    dispatch(currentStreakActions.resetStreak());
-  }
-  // const [startDate, setStartDate] = useState(currentStreak);
-  const [showDateTimePicker, setShowDateTimePicker] = useState(false)
+  const theme = useTheme();
+
+  const [detoxes, selectedDetox, currentStreakStartDate] = useSelector(
+    (state) => {
+      const currentStreakStartDate =
+        state.selectedDetox === null
+          ? formattedDate() // set startdate as now if it is first time user
+          : state.detoxes[state.selectedDetox].currentStreakStartDate;
+
+      return [
+        Object.keys(state.detoxes),
+        state.selectedDetox,
+        currentStreakStartDate,
+      ];
+    }
+  );
+
+  const [showDateTimePicker, setShowDateTimePicker] = useState(false);
+  const [showDetoxPrompt, setShowDetoxPrompt] = useState(false);
+
+  const detoxesListEmpty = selectedDetox == null
 
   const handleResetStreak = () => {
-    const endDate = moment().format(DATE_FORMAT);
-    const streak = { startDate: currentStreak, endDate };
     navigate('Reason', {
-      relapse: streak,
-      mode: 'streak_reset',
-      onSave: () => {
-        const newStreak = moment().format(DATE_FORMAT);
-        dispatch(currentStreakActions.resetStreak(newStreak));
-        // setStartDate(newStreak);
+      relapse: {
+        startDate: currentStreakStartDate,
+        endDate: formattedDate(),
+        title: '',
+        text: '',
+      },
+      onSave: (relapse) => {
+        dispatch(
+          newRelapse({ detox: selectedDetox, relapse, resetStreak: true })
+        );
       },
     });
   };
 
+  const changeSelectedDetox = (name) => {
+    dispatch(setSelectedDetox(name));
+  };
+
   return (
-    <View style={styles.container}>
-      <AppBar title='Fortisman' isHome={true} />
-      <View style={{ flex: 1, justifyContent: 'center', gap: 32 }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'flex-end',
-          }}>
-          <ProgressCount
-            startDate={currentStreak}
-            onClick={() => setShowDateTimePicker(true)}
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <TopAppbar title='Fortisman' isHome={true} />
+      <View
+        style={{
+          marginVertical: 16,
+          marginLeft: 40,
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'flex-end',
+        }}>
+        <ProgressCount
+          startDate={currentStreakStartDate}
+          onClick={() => setShowDateTimePicker(true)}
+        />
+        <Pressable onPress={handleResetStreak}>
+          <SvgXml
+            width={50}
+            height={50}
+            xml={resetIcon(theme.colors.tertiary)}
           />
-          <Pressable onPress={handleResetStreak}>
-            <Image source={resetIcon} />
-          </Pressable>
-        </View>
-        <View>
-          <Text style={{ textAlign: 'left' }}>
-            Strength doesnt come from physical capacity, it comes from an
-            indomitable will
-          </Text>
-          <Text style={{ textAlign: 'right' }}>‒ Mahatma Ghandi</Text>
-        </View>
+        </Pressable>
       </View>
+      <DetoxesList
+        changeSelectedDetox={changeSelectedDetox}
+        selectedDetox={selectedDetox}
+        onDelete={(detox) => {
+          let nsd;
+          if (detoxes.length > 1)
+            nsd = detoxes.concat().filter((item) => item != detox)[0];
+          else nsd = null;
+          dispatch(setSelectedDetox(nsd));
+          dispatch(deleteDetox(detox));
+        }}
+      />
       {showDateTimePicker ? (
         <DTPicker
-          date={currentStreak}
+          date={currentStreakStartDate}
+          onCancel={() => setShowDateTimePicker(false)}
           onChange={(date) => {
-            console.log(moment(date).format(DATE_FORMAT));
             setShowDateTimePicker(false);
-            dispatch(currentStreakActions.setStreakStartDate(date));
+            dispatch(setCurrentStreakStartDate({ detox: selectedDetox, date }));
           }}
         />
       ) : null}
-      <Navigation />
+      {showDetoxPrompt || detoxesListEmpty ? (
+        <FortisDialog
+          type='prompt'
+          title={
+            {
+              true: 'Create Your First Detox',
+              false: 'What would you like to quit?',
+            }[detoxesListEmpty]
+          }
+          message={
+            {
+              true: 'Enter the first thing you want to detox from to continue...',
+              false: undefined,
+            }[detoxesListEmpty]
+          }
+          cancelable={{ true: false, false: true }[detoxesListEmpty]}
+          onCancel={
+            { true: undefined, false: () => setShowDetoxPrompt(false) }[
+              detoxesListEmpty
+            ]
+          }
+          onOk={(detox) => {
+            if (detox.length == 0) return;
+            showDetoxPrompt && setShowDetoxPrompt(false);
+            dispatch(createDetox(detox));
+            dispatch(setSelectedDetox(detox));
+          }}
+        />
+      ) : null}
+
+      <FAB icon='plus' onPress={() => setShowDetoxPrompt(true)} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#00808066',
-  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',

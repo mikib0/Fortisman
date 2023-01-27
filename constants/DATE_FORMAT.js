@@ -1,0 +1,1 @@
+export default 'YYYY-MM-DDTHH:mm:ss';

@@ -1,37 +1,44 @@
 import moment from 'moment';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
 
 import { expand_more } from '../assets';
-import { DTPicker } from '.';
+import DTPicker from './DTPicker';
+import { Text, Button, IconButton, useTheme } from 'react-native-paper';
 
 const Timestamp = ({ date, onChange }) => {
-  const [showDateModal, setShowDateModal] = useState(false);
+  const [showDateTimePicker, setShowDateTimePicker] = useState(false);
+  const theme = useTheme();
 
   return (
     <View style={{ position: 'relative' }}>
+      {/* <Button
+        compact
+        contentStyle={{ flexDirection: 'row-reverse' }}
+        style={{ marginLeft: -8 }}
+        icon='menu-down'>
+        <Text variant='bodySmall' style={{ color: theme.colors.onSurface }}>
+          {moment(date).format('DD MMM YYYY, hh:mmA')}
+        </Text>
+      </Button> */}
       <TouchableOpacity
         onPress={() => {
-          setShowDateModal(true);
+          setShowDateTimePicker(true);
         }}>
         <View style={styles.container}>
-          <Text>{moment(date).format('DD MMM YYYY, hh:mmA')}</Text>
-          <Image source={expand_more} />
-          {/* <Icon name='arrow_downward' size={20} /> */}
+          <Text variant='bodySmall'>
+            {moment(date).format('DD MMM YYYY, hh:mmA')}
+          </Text>
+          <IconButton icon='menu-down' style={{ marginHorizontal: -8 }} />
         </View>
       </TouchableOpacity>
 
-      {showDateModal ? (
+      {showDateTimePicker ? (
         <DTPicker
           date={date}
+          onCancel={() => setShowDateTimePicker(false)}
           onChange={(date) => {
-            setShowDateModal(false);
+            setShowDateTimePicker(false);
             onChange(date);
           }}
         />
@@ -43,7 +50,7 @@ const Timestamp = ({ date, onChange }) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    gap: 2,
+    alignItems: 'center',
   },
 });
 

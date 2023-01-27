@@ -9,6 +9,11 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
+refine.md
+todo.md
+test.js
+.pnpm-debug.log
+.vscode
 
 # macOS
 .DS_Store

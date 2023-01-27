@@ -1,104 +1,129 @@
-import { View, Text, Image, Pressable, StyleSheet, Share } from 'react-native';
-import { useState } from 'react';
+import { View, Image, Pressable, StyleSheet, Share } from 'react-native';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { expand_more, share, bookmark, bookmark_fill } from '../assets';
-import { Navigation, AppBar } from '../components';
+import { TopAppbar } from '../components';
 import { quotesActions } from '../redux/quotes';
-
-const Quote = ({ quote }) => {
-  const { text, author } = quote;
-
-  return (
-    <View
-      style={[
-        styles.quoteContainer,
-        // {
-        //   transform: [{ translateY: '100%' }],
-        // },
-      ]}>
-      <Text style={styles.text}>{text}</Text>
-      <Text style={styles.author}>— {author}</Text>
-    </View>
-  );
-};
+import Quote from '../components/Quote';
+import { IconButton, useTheme, Appbar } from 'react-native-paper';
 
 const shareQuote = ({ text, author }) => {
   Share.share({
     message: `${text} —${author}`,
   })
     .then((result) => {
-      console.log(result);
+      //TODO: toast success message
     })
     .catch((error) => {
-      console.log(error);
+      //TODO: toast error message
     });
 };
 
 const Quotes = () => {
   const quotes = useSelector((state) => state.quotes);
+  const [favoritesShown, setFavoritesShown] = useState(false);
   const dispatch = useDispatch();
   const [index, setIndex] = useState(0);
-  let [isBookmarked, setIsBookmarked] = useState(quotes[index].favorite);
-  console.log(quotes[index]);
+  const theme = useTheme();
+  console.log(index, useSelector((state) => state.quotes)[index]);
 
-  // useEffect(() => {
-  //   isBookmarked = quotes[index].favorite;
-  // }, [index])
+  let quotesShown = favoritesShown
+  ? quotes.filter(({ favorite }) => favorite)
+  : quotes.concat();
+
+  if (favoritesShown && quotesShown.length == 0) {
+    setFavoritesShown(false)
+    return
+  }
+  else if (favoritesShown && index == quotesShown.length) {
+    setIndex(index % quotesShown.length);
+    return
+  }
 
   // TODO: add swipe animation
   const showNext = () => {
-    const nextIndex = (index + 1) % quotes.length;
-    setIndex(() => {
-      setIsBookmarked(() => {
-        console.log(nextIndex, quotes[nextIndex].favorite);
-        return quotes[nextIndex].favorite;
-      });
-      return nextIndex;
-    });
+    const nextIndex = (index + 1) % quotesShown.length;
+    setIndex(nextIndex);
+  };
+
+  const showPrev = () => {
+    const nextIndex =
+      (index - 1 < 0 ? quotesShown.length - 1 : index - 1) % quotesShown.length;
+    setIndex(nextIndex);
   };
 
   const toggleFavorite = () => {
-    setIsBookmarked(() => {
-      dispatch(quotesActions.toggleFavorite(index));
-      return !quotes[index].favorite;
-    });
+    dispatch(
+      quotesActions.toggleFavorite(
+        quotes.map(({ text }) => text).indexOf(quotesShown[index].text)
+      )
+    );
+  };
+
+  const toggleFavorites = () => {
+    setIndex(0);
+    setFavoritesShown(!favoritesShown);
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <AppBar title='Qoutes' />
-      <Quote quote={quotes[index]} />
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <TopAppbar
+        title='Qoutes'
+        right={
+          <Appbar.Action
+            icon={
+              favoritesShown ? 'bookmark-multiple' : 'bookmark-multiple-outline'
+            }
+            onPress={toggleFavorites}
+          />
+        }
+      />
+      <Quote quote={quotesShown[index]} />
 
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Pressable onPress={() => shareQuote(quotes[index])}>
-          <Image source={share} />
-        </Pressable>
-        <Pressable onPress={showNext}>
-          <Image source={expand_more} />
-        </Pressable>
-        <Pressable onPress={toggleFavorite}>
-          <Image source={isBookmarked ? bookmark_fill : bookmark} />
-        </Pressable>
+      <View
+        style={{
+          position: 'absolute',
+          bottom: 56,
+          width: '100%',
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 8,
+        }}>
+        <IconButton
+          icon='chevron-double-left'
+          iconColor={theme.colors.onBackground}
+          size={24}
+          onPress={showPrev}
+        />
+        <IconButton
+          icon='share-variant-outline'
+          iconColor={theme.colors.onBackground}
+          size={24}
+          onPress={() => shareQuote(quotesShown[index])}
+        />
+        <IconButton
+          icon={(()=>{
+            console.log(
+              quotes[index]
+            );
+            return quotesShown[index].favorite
+              ? 'bookmark'
+              : 'bookmark-outline';
+          })()}
+          iconColor={theme.colors.onBackground}
+          size={24}
+          onPress={toggleFavorite}
+        />
+        <IconButton
+          icon='chevron-double-right'
+          iconColor={theme.colors.onBackground}
+          size={24}
+          onPress={showNext}
+        />
       </View>
-      <Navigation />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  quoteContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 18,
-  },
-  author: {
-    fontSize: 14,
-    color: 'gray',
-  },
-});
 
 export default Quotes;

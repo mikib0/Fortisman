@@ -1,4 +1,3 @@
-- export from
-- setup emulator
+- <del>export from</del>
+- <del>setup emulator</del>
 - use typescript
-- react native vector icons
