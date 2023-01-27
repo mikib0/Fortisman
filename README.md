@@ -2,11 +2,8 @@
 
 A React Native mobile app for tracking different detoxes and keeping a journal of relapses.
 
-<video width="320" height="240" controls>
-  <source src="/blob/main/demo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-
+<!-- fortisman demo -->
+https://user-images.githubusercontent.com/54102880/215077600-676fa616-da46-45f6-b8fd-19523ca7407c.mp4
 
 ### Features :fire:
 
