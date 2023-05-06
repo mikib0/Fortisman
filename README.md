@@ -16,7 +16,7 @@ https://user-images.githubusercontent.com/54102880/215077600-676fa616-da46-45f6-
 ### Downloads:
 | Platform | Version | Link
 | -------- | ------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Android | 1.0.0 | [Download](https://expo.dev/artifacts/eas/pmepMNGFPAkjgJr96JHxTn.apk)| 
+| Android | 1.0.0 | [Download](https://expo.dev/artifacts/eas/6g8xSYiF1kMQgjP364FtRQ.apk)| 
 | iOS | 1.0.0 | <i>unavailable</i>|
 
 <!-- > Note: You can only run the iOS build in a simulator or a jailbroken iphone -->
